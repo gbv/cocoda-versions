@@ -11,8 +11,13 @@ RUN apt install -y curl git wget unzip jq
 RUN curl -fsSL https://fnm.vercel.app/install | bash
 
 COPY . .
+ENV BASH_ENV=/root/.bash_profile
+
+# Install Node.js and global npm dependencies
+RUN ./install.sh
 
 # Directory where all Cocoda installations will live
 RUN mkdir -p /www/cocoda
 
-CMD ./docker-entrypoint.sh
+# Start HTTP server
+CMD ./entrypoint.sh

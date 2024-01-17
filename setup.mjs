@@ -88,7 +88,3 @@ for (const { name, configFile, branch } of instances) {
   }
   console.log(`- Successfully built instance ${name}!`)
 }
-
-const port = process.env.PORT ?? "8091"
-console.log(`Starting HTTP server on port ${port}...`)
-await $`npx http-server -s -d false -p ${port} /www/`

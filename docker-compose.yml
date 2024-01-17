@@ -1,12 +1,15 @@
 version: "3"
 
+# Compose file for local testing
+
 services:
   cocoda:
     build: .
     volumes:
       - ./data/cocoda:/www/cocoda
       - ./data/cocoda.git:/root/cocoda/
-      - ./test.mjs:/root/test.mjs
+      # Mount start.mjs script so that we can edit it without rebuilding the container
+      - ./start.mjs:/root/start.mjs
     ports:
       - 8091:80
     environment:

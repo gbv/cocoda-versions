@@ -27,7 +27,14 @@ A special tag `all` can be used to build ALL existing Cocoda versions, plus bran
 
 The HTTP server serves the instances under the subpath `/cocoda/`, i.e. in the above example, branch `dev` will be availble at http://localhost:8080/cocoda/dev/.
 
-## To-Do
-- [ ] Consider using other HTTP server instead of [http-server](https://github.com/http-party/http-server)
-- [ ] Separate build step from container start (only start HTTP server on container start)
-- [ ] Update specific versions/branches without restarting container.
+Starting the HTTP server:
+
+```sh
+docker compose up -d
+```
+
+Run setup to build or update instances:
+
+```sh
+docker compose run -it cocoda bash setup.sh
+```
