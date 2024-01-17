@@ -27,7 +27,7 @@ In the bind mount `./data/cocoda`, the static files of all Cocoda instances will
 
 A special tag `all` can be used to build ALL existing Cocoda versions, plus branches `dev` and `master`. This can be used to provide a history of old Cocoda versions.
 
-The HTTP server serves the instances under the subpath `/cocoda/`, i.e. in the above example, branch `dev` will be availble at http://localhost:8080/cocoda/dev/.
+The HTTP server serves the instances with their names as subpath, i.e. in the above example, branch `dev` will be availble at http://localhost:8080/dev/. (If `USE_SUBPATH` is set, the subpath `/cocoda/` will be added.)
 
 Starting the HTTP server:
 

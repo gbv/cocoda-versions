@@ -17,6 +17,8 @@ services:
     environment:
       # Tags or branches to be built with default configuration
       - TAGS=dev
+      # Serve instances under subpath "/cocoda/"
+      - USE_SUBPATH=true
       # Optional port (default is 80)
       # - PORT=8091
     # restart: unless-stopped
