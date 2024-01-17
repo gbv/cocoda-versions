@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  cocoda:
+    build: .
+    volumes:
+      - ./data/cocoda:/www/cocoda
+      - ./data/cocoda.git:/root/cocoda/
+      - ./test.mjs:/root/test.mjs
+    ports:
+      - 8091:80
+    environment:
+      - TAGS=dev
+    # restart: unless-stopped

@@ -1,0 +1,18 @@
+FROM ubuntu:22.04
+WORKDIR /root
+
+# Use bash as shell (instead of sh)
+SHELL ["/bin/bash", "-c"]
+
+RUN apt update
+# Install dependencies
+RUN apt install -y curl git wget unzip jq
+# Install fnm for managing Node.js versions
+RUN curl -fsSL https://fnm.vercel.app/install | bash
+
+COPY . .
+
+# Directory where all Cocoda installations will live
+RUN mkdir -p /www/cocoda
+
+CMD ./docker-entrypoint.sh
