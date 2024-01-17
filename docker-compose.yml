@@ -6,12 +6,17 @@ services:
   cocoda:
     build: .
     volumes:
+      # Contains custom configs and built Cocoda instances
       - ./data/cocoda:/www/cocoda
+      # Optionally mount Cocoda repository so it won't need to be cloned again when the container is recreated
       - ./data/cocoda.git:/root/cocoda/
-      # Mount start.mjs script so that we can edit it without rebuilding the container
+      # Optionally mount start.mjs script so that we can edit it without rebuilding the container
       - ./start.mjs:/root/start.mjs
     ports:
       - 8091:80
     environment:
+      # Tags or branches to be built with default configuration
       - TAGS=dev
+      # Optional port (default is 80)
+      # - PORT=8091
     # restart: unless-stopped

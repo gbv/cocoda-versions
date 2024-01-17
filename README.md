@@ -6,6 +6,8 @@ Note: Experimental.
 
 ## Usage via Docker Compose
 
+See also the included `docker-compose.yml` file in this repository.
+
 ```yml
 version: "3"
 
