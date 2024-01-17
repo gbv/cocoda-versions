@@ -4,6 +4,11 @@ Docker image to manage and serve multiple instances of [Cocoda Mapping Tool](htt
 
 Note: Experimental.
 
+## Table of Contents
+- [Usage via Docker Compose](#usage-via-docker-compose)
+- [Maintainers](#maintainers)
+- [License](#license)
+
 ## Usage via Docker Compose
 
 See also the included `docker-compose.yml` file in this repository.
@@ -40,3 +45,11 @@ Run setup to build or update instances:
 ```sh
 docker compose run -it cocoda bash setup.sh
 ```
+
+## Maintainers
+
+- [@stefandesu](https://github.com/stefandesu)
+
+## License
+
+MIT ©2024 Verbundzentrale des GBV (VZG)
