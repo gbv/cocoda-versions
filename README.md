@@ -43,7 +43,7 @@ docker compose up -d
 Run setup to build or update instances:
 
 ```sh
-docker compose run -it cocoda bash setup.sh
+docker compose exec -it cocoda bash setup.sh
 ```
 
 ## Maintainers
