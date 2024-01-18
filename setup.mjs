@@ -56,35 +56,39 @@ const updatedBranches = new Set()
 
 for (const { name, configFile, branch } of instances) {
   console.log(`Cocoda Instance: ${name} (branch/tag: ${branch}, config: ${configFile ?? "none"})`)
-  if (await fs.pathExists(`${targetFolder}/${name}`)) {
-    // No updates for non-branches
-    if (branch.match(/^\d/)) {
-      console.log("- instance already built and no updates necessary")
-      continue
+  try {
+    if (await fs.pathExists(`${targetFolder}/${name}`)) {
+      // No updates for non-branches
+      if (branch.match(/^\d/)) {
+        console.log("- instance already built and no updates necessary")
+        continue
+      }
+      
+      // Skip if there are no changes with origin
+      await $`git fetch`.quiet()
+      const diff = await $`git diff ${branch} origin/${branch}`.quiet()
+      if (!`${diff}`.trim() && !updatedBranches.has(branch)) {
+        console.log("- instance already built and no updates necessary")
+        continue
+      }
+      updatedBranches.add(branch)
+      console.log(`- There's an update to branch ${branch}. Pulling changes and rebuilding Cocoda...`)
+      await $`git pull origin ${branch}`.quiet()
     }
-    
-    // Skip if there are no changes with origin
-    await $`git fetch`.quiet()
-    const diff = await $`git diff ${branch} origin/${branch}`.quiet()
-    if (!`${diff}`.trim() && !updatedBranches.has(branch)) {
-      console.log("- instance already built and no updates necessary")
-      continue
+    // Build version via build-all.sh script
+    await $`./build/build-all.sh ${branch}`
+    // Move files to target folder
+    if (await fs.pathExists(`${targetFolder}/${name}`)) {
+      await $`rm -r ${targetFolder}/${name}`
     }
-    updatedBranches.add(branch)
-    console.log(`- There's an update to branch ${branch}. Pulling changes and rebuilding Cocoda...`)
-    await $`git pull origin ${branch}`.quiet()
+    await $`mv releases/${branch} ${targetFolder}/${name}`
+    // Link config file if needed
+    if (configFile) {
+      await $`rm ${targetFolder}/${name}/cocoda.json`
+      await $`ln -s ${configFile} ${targetFolder}/${name}/cocoda.json`
+    }
+    console.log(`- Successfully built instance ${name}!`)
+  } catch (error) {
+    console.error(`- Error building instance ${name}: ${error}`)
   }
-  // Build version via build-all.sh script
-  await $`./build/build-all.sh ${branch}`
-  // Move files to target folder
-  if (await fs.pathExists(`${targetFolder}/${name}`)) {
-    await $`rm -r ${targetFolder}/${name}`
-  }
-  await $`mv releases/${branch} ${targetFolder}/${name}`
-  // Link config file if needed
-  if (configFile) {
-    await $`rm ${targetFolder}/${name}/cocoda.json`
-    await $`ln -s ${configFile} ${targetFolder}/${name}/cocoda.json`
-  }
-  console.log(`- Successfully built instance ${name}!`)
 }
