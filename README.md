@@ -45,7 +45,7 @@ docker compose up -d
 Run setup to build or update instances:
 
 ```sh
-docker compose exec -it cocoda bash setup.sh
+docker compose exec cocoda bash setup.sh
 ```
 
 ### Custom Instances
