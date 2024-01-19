@@ -13,7 +13,7 @@ services:
       # Optionally mount Cocoda repository so it won't need to be cloned again when the container is recreated
       - ./data/cocoda.git:/root/cocoda/
       # Optionally mount start.mjs script for development so that we can edit it without rebuilding the container
-      - ./start.mjs:/root/start.mjs
+      - ./setup.mjs:/root/setup.mjs
     ports:
       - 8091:80
     environment:
