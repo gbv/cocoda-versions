@@ -93,3 +93,17 @@ for (const { name, configFile, branch } of instances) {
     console.error(`- Error building instance ${name}: ${error}`)
   }
 }
+
+// Update builds.json file
+const builds = {}
+console.log("Creating builds.json file...")
+for (const { name } of instances) {
+  const buildInfoFile = `${targetFolder}/${name}/build-info.json`
+  try {
+    const buildInfo = await fs.readJson(buildInfoFile)
+    builds[name] = buildInfo
+  } catch (_error) {
+    console.warn(`- Warning: Could not read build-info.json for instance ${name}.`)
+  }
+}
+await fs.writeJSON(`${targetFolder}/builds.json`, builds, { spaces: 2 })
