@@ -26,10 +26,11 @@ if (tags.has("all")) {
   tags.add("dev")
 }
 
+const configsFolder = "/configs"
 const targetFolder = "/www/cocoda"
 
 // Target folder also contains custom configs
-const customConfigs = await glob([`${targetFolder}/*.json`])
+const customConfigs = await glob([`${configsFolder}/*.json`])
 const instances = []
 for (const configFile of customConfigs) {
   const name = path.basename(configFile, ".json")
