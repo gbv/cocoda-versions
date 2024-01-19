@@ -7,6 +7,8 @@ SHELL ["/bin/bash", "-c"]
 RUN apt update
 # Install dependencies
 RUN apt install -y curl git wget unzip jq
+# Install dependencies for building manual
+RUN apt install -y pandoc make
 # Install fnm for managing Node.js versions
 RUN curl -fsSL https://fnm.vercel.app/install | bash
 
