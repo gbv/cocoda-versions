@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./setup.mjs
+tsp -nf ./setup.mjs

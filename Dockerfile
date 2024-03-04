@@ -6,7 +6,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt update
 # Install dependencies
-RUN apt install -y curl git wget unzip jq
+RUN apt install -y curl git wget unzip jq task-spooler
 # Install dependencies for building manual
 RUN apt install -y pandoc make
 # Install fnm for managing Node.js versions
