@@ -15,8 +15,6 @@ Note: Experimental.
 See also the included `docker-compose.yml` file in this repository.
 
 ```yml
-version: "3"
-
 services:
   cocoda:
     image: ghcr.io/gbv/cocoda-versions
