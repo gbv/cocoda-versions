@@ -74,7 +74,8 @@ for (const { name, configFile, branch } of instances) {
       }
       updatedBranches.add(branch)
       console.log(`- There's an update to branch ${branch}. Pulling changes and rebuilding Cocoda...`)
-      await $`git pull origin ${branch}`.quiet()
+      await $`git checkout ${branch}`
+      await $`git pull`
     }
     // Build version via build-all.sh script
     await $`./build/build-all.sh ${branch}`
