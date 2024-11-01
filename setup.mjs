@@ -64,8 +64,6 @@ for (const tag of tags) {
   instances.push({ name: tag, branch: tag })
 }
 
-const updatedBranches = new Set()
-
 for (const { name, directory, configFile, branch } of instances) {
   console.log(`Cocoda Instance: ${name} (branch/tag: ${branch}, config: ${configFile ?? "none"})`)
   try {
@@ -75,18 +73,29 @@ for (const { name, directory, configFile, branch } of instances) {
         console.log("- instance already built and no updates necessary")
         continue
       }
+
+      // Determine target commit via build-info.json to compare with current commit
+      let buildCommit
+      try {
+        const buildInfo = await fs.readJson(`${targetFolder}/${name}/build-info.json`)
+        buildCommit = buildInfo.gitCommit
+      } catch (error) {
+        // Ignore = empty buildCommit means we'll build it anyways
+      }
       
-      // Skip if there are no changes with origin
-      await $`git fetch`.quiet()
-      const diff = await $`git diff ${branch} origin/${branch}`.quiet()
-      if (!`${diff}`.trim() && !updatedBranches.has(branch)) {
+      // Checkout branch and pull changes
+      await $`git checkout ${branch}`
+      await $`git pull`
+
+      // Get current commit and compare with build commit
+      const currentCommit = `${await $`git rev-parse --verify HEAD`.quiet()}`.trim()
+
+      if (currentCommit === buildCommit) {
         console.log("- instance already built and no updates necessary")
         continue
       }
-      updatedBranches.add(branch)
-      console.log(`- There's an update to branch ${branch}. Pulling changes and rebuilding Cocoda...`)
-      await $`git checkout ${branch}`
-      await $`git pull`
+
+      console.log(`- There's an update to branch ${branch} or built instance is not up-to-date. Rebuilding Cocoda...`)
     }
     // Build version via build-all.sh script
     await $`./build/build-all.sh ${branch}`
