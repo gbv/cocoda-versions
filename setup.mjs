@@ -30,15 +30,26 @@ const configsFolder = "/configs"
 const targetFolder = "/www/cocoda"
 
 // Target folder also contains custom configs
-const customConfigs = await glob([`${configsFolder}/*.json`])
+const customConfigs = await glob([`${configsFolder}/**/*.json`])
 const instances = []
 for (const configFile of customConfigs) {
-  const name = path.basename(configFile, ".json")
+  const relativePath = path.relative(configsFolder, configFile)
+  let directory = path.dirname(relativePath), name = path.basename(relativePath, ".json")
+  if (directory === ".") {
+    directory = null
+  } else {
+    // Require config file to be called "cocoda.json"
+    if (name !== "cocoda") {
+      continue
+    }
+    name = directory
+    directory = path.join(configsFolder, directory)
+  }
   if (tags.has(name)) {
     tags.delete(name)
   }
   // Read config file
-  const instance = { name, configFile }
+  const instance = { name, directory, configFile }
   try {
     const { _branch } = await fs.readJson(configFile)
     instance.branch = _branch || "master"
@@ -55,7 +66,7 @@ for (const tag of tags) {
 
 const updatedBranches = new Set()
 
-for (const { name, configFile, branch } of instances) {
+for (const { name, directory, configFile, branch } of instances) {
   console.log(`Cocoda Instance: ${name} (branch/tag: ${branch}, config: ${configFile ?? "none"})`)
   try {
     if (await fs.pathExists(`${targetFolder}/${name}`)) {
@@ -88,6 +99,10 @@ for (const { name, configFile, branch } of instances) {
     if (configFile) {
       await $`rm ${targetFolder}/${name}/cocoda.json`
       await $`ln -s ${configFile} ${targetFolder}/${name}/cocoda.json`
+    }
+    // Copy static files into root path if necessary
+    if (directory) {
+      await $`rsync -a ${directory}/* ${targetFolder}/${name} --exclude=cocoda.json`
     }
     console.log(`- Successfully built instance ${name}!`)
   } catch (error) {
