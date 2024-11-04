@@ -66,11 +66,37 @@ for (const tag of tags) {
 
 for (const { name, directory, configFile, branch } of instances) {
   console.log(`Cocoda Instance: ${name} (branch/tag: ${branch}, config: ${configFile ?? "none"})`)
+
+  async function relinkStaticFiles() {
+    if (directory) {
+      console.log("- relinking static files...")
+      // Link static files into root path if configuration is in a directory and includes static files
+      // Note that `cocoda.json` is one of these files and doesn't need special handling.
+      const files = await glob([`${directory}/**/*`])
+      for (const file of files) {
+        const source = file, target = path.join(targetFolder, name, path.relative(directory, file))
+        if (await fs.pathExists(target)) {
+          await $`rm ${target}`
+        }
+        await $`ln -s ${source} ${target}`
+      }
+    } else if (configFile) {
+      // Link config file only
+      console.log("- relinking config file...")
+      const target = path.join(targetFolder, name, "cocoda.json")
+      if (await fs.pathExists(target)) {
+        await $`rm ${target}`
+      }
+      await $`ln -s ${configFile} ${target}`
+    }
+  }
+
   try {
     if (await fs.pathExists(`${targetFolder}/${name}`)) {
       // No updates for non-branches
       if (branch.match(/^\d/)) {
         console.log("- instance already built and no updates necessary")
+        await relinkStaticFiles()
         continue
       }
 
@@ -92,6 +118,7 @@ for (const { name, directory, configFile, branch } of instances) {
 
       if (currentCommit === buildCommit) {
         console.log("- instance already built and no updates necessary")
+        await relinkStaticFiles()
         continue
       }
 
@@ -104,15 +131,7 @@ for (const { name, directory, configFile, branch } of instances) {
       await $`rm -r ${targetFolder}/${name}`
     }
     await $`mv releases/${branch} ${targetFolder}/${name}`
-    // Link config file if needed
-    if (configFile) {
-      await $`rm ${targetFolder}/${name}/cocoda.json`
-      await $`ln -s ${configFile} ${targetFolder}/${name}/cocoda.json`
-    }
-    // Copy static files into root path if necessary
-    if (directory) {
-      await $`rsync -a ${directory}/* ${targetFolder}/${name} --exclude=cocoda.json`
-    }
+    await relinkStaticFiles()
     console.log(`- Successfully built instance ${name}!`)
   } catch (error) {
     console.error(`- Error building instance ${name}: ${error}`)

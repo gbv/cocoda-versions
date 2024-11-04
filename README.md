@@ -48,7 +48,7 @@ docker compose exec cocoda bash setup.sh
 
 ### Custom Instances
 
-You can also specify custom Cocoda configurations as `{instance-name}.json` or `{instance-name}/cocoda.json` in the container's `/configs` directory. These will be built in addition to the defined `TAGS`. Custom configurations will use branch `master` by default; a different branch for a particular instance can be specific inside its configuration file as `_branch`. If the latter format is used, all other files (except `cocoda.json`) will be copied into the target build folder (e.g. for logo files).
+You can also specify custom Cocoda configurations as `{instance-name}.json` or `{instance-name}/cocoda.json` in the container's `/configs` directory. These will be built in addition to the defined `TAGS`. Custom configurations will use branch `master` by default; a different branch for a particular instance can be specific inside its configuration file as `_branch`. If the latter format is used, all other files (except `cocoda.json`) will be linked into the target build folder (e.g. for logo files). **Note** that static files given in the configuration folder will overwrite files in the build!
 
 ## Maintainers
 
